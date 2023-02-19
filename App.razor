@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <CascadingAuthenticationState>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>
+
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private async Task LogUserAuthenticationState()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+
+        if (user.Identity!.IsAuthenticated)
+        {
+            Console.WriteLine($"User {user.Identity.Name} is authenticated.");
+        }
+        else
+        {
+            Console.WriteLine("User is NOT authenticated.");
+        }
+    }
+}
